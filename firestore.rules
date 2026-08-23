@@ -1,0 +1,49 @@
+rules_version = '2';
+
+// Security model
+// --------------
+// This app has no login backend (no Firebase Authentication) — the admin
+// password and each team member's name are checked entirely in the browser.
+// Because of that, Firestore has no server-verifiable identity to gate
+// writes on, so these rules cannot enforce "admin-only" or "own records
+// only" the way a fully authenticated app would. They only validate that
+// documents have the right shape; access control (who sees Edit/Delete
+// buttons) is enforced in the UI. This is a deliberate trade-off for a
+// small, trusted private group — see README.md. Do not use this rules file
+// for data that needs real per-user write protection.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /contributions/{contributionId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.donorName is string
+        && request.resource.data.donorName.size() > 0
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0;
+      allow delete: if true;
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.userName is string
+        && request.resource.data.userName.size() > 0
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.description is string;
+      allow delete: if true;
+    }
+
+    match /members/{memberId} {
+      allow read: if true;
+      allow create: if request.resource.data.name is string
+        && request.resource.data.name.size() > 0;
+      allow update: if false;
+      allow delete: if true;
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
