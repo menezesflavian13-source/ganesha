@@ -62,8 +62,8 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <span className="login-emoji" aria-hidden="true">🐘</span>
-          <h1>Expense Manager</h1>
-          <p className="login-subtitle">Track shared contributions and expenses</p>
+          <h1>Ambika Ganapati – Ambika Cha Raja</h1>
+          <p className="login-subtitle">Committee expense &amp; contribution tracker</p>
         </div>
 
         <div className="tabs">

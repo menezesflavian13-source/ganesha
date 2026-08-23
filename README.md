@@ -217,9 +217,24 @@ Before relying on this for a real event, click through:
    `/admin` in the URL bar — you should be redirected to `/dashboard`, not
    shown the admin screen.
 
-## Notes
+## SEO
 
-- SEO (meta description, keywords, social tags) is intentionally left out for
-  now, pending keyword research. `index.html` has a single `<title>` tag and
-  a comment marking where to add meta tags later, so nothing here needs
-  restructuring when that work starts.
+Basic on-page SEO is in place, targeting "Ambika cha Raja" / "Ambika Ganapati":
+
+- `index.html` — title, meta description/keywords, Open Graph & Twitter card
+  tags (for WhatsApp/social link previews), a `WebSite` JSON-LD block, and an
+  emoji favicon (no image files needed).
+- `src/pages/LoginPage.jsx` — the visible `<h1>` uses the same keywords (on-page
+  text matters as much as meta tags).
+- `public/robots.txt` and `public/sitemap.xml` — basic crawl hints.
+
+**One thing to fix after you deploy:** search and replace
+`REPLACE_WITH_YOUR_DOMAIN` in `index.html` (3 spots: canonical link, `og:url`,
+and the JSON-LD `url`), `public/robots.txt`, and `public/sitemap.xml` with
+your real Vercel URL or custom domain (e.g. `ambika-expense-manager.vercel.app`).
+Then commit and redeploy.
+
+To actually get indexed by Google, see the Google Search Console + Chrome
+Lighthouse steps your conversation with Claude covered — in short: verify the
+site in Search Console, submit `sitemap.xml`, and request indexing for the
+homepage URL.

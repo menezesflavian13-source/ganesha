@@ -1,0 +1,21 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDDs1kX1n4nYfeVz8-_g0vuy4duUZ8mZHI",
+  authDomain: "ganesh-expense-manager-b67f2.firebaseapp.com",
+  projectId: "ganesh-expense-manager-b67f2",
+  storageBucket: "ganesh-expense-manager-b67f2.firebasestorage.app",
+  messagingSenderId: "482595485372",
+  appId: "1:482595485372:web:4e04d6dbe1e5b0f81542b9",
+  measurementId: "G-DSHG8N1MJB"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
