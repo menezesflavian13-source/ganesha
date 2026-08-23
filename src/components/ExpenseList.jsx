@@ -4,22 +4,14 @@ import { useConfirm } from '../context/ConfirmContext'
 import { formatCurrency, formatDate } from '../utils/format'
 
 // `canEdit(expense)` decides per-row whether Edit/Delete show up — the
-// caller passes the actual authorization logic (admin, or "is my own row").
-export default function ExpenseList({
-  expenses,
-  loading,
-  canEdit,
-  allowUserNameSelect = false,
-  members = [],
-  onSave,
-  onDelete,
-}) {
+// caller passes the actual authorization logic (currently: admin only).
+export default function ExpenseList({ expenses, loading, canEdit, onSave, onDelete }) {
   const [editingId, setEditingId] = useState(null)
   const confirm = useConfirm()
 
   async function handleDelete(expense) {
     const ok = await confirm(
-      `Delete "${expense.description}" (${formatCurrency(expense.amount)}) by ${expense.userName}?`
+      `Delete "${expense.description}" (${formatCurrency(expense.amount)}) spent by ${expense.spentBy}?`
     )
     if (ok) {
       await onDelete(expense.id)
@@ -40,9 +32,6 @@ export default function ExpenseList({
             {isEditing ? (
               <ExpenseForm
                 initial={expense}
-                fixedUserName={expense.userName}
-                allowUserNameSelect={allowUserNameSelect}
-                members={members}
                 submitLabel="Save"
                 onCancel={() => setEditingId(null)}
                 onSubmit={async (values) => {
@@ -58,7 +47,7 @@ export default function ExpenseList({
                     <span className="record-amount">{formatCurrency(expense.amount)}</span>
                   </div>
                   <div className="record-meta">
-                    <span>{expense.userName}</span>
+                    <span>Spent by {expense.spentBy}</span>
                     <span>•</span>
                     <span>{formatDate(expense.date)}</span>
                   </div>

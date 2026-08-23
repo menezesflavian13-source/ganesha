@@ -2,19 +2,16 @@ import { useState } from 'react'
 import { todayISODate } from '../utils/format'
 
 // Reusable for both "add new" and "edit existing" (pass `initial`).
-// `fixedUserName` locks the name field for a regular user adding their own
-// expense. `allowUserNameSelect` + `members` lets an admin pick/reassign the
-// name from the Firestore-managed team list.
+// "Spent By" is a plain required text field — not tied to who is logged in
+// (everyone currently shares one "General" login) and not yet a dropdown
+// (that's a later enhancement). Every field here is required.
 export default function ExpenseForm({
   initial,
-  fixedUserName,
-  allowUserNameSelect = false,
-  members = [],
   onSubmit,
   onCancel,
   submitLabel = 'Add Expense',
 }) {
-  const [userName, setUserName] = useState(initial?.userName || fixedUserName || '')
+  const [spentBy, setSpentBy] = useState(initial?.spentBy || '')
   const [amount, setAmount] = useState(initial?.amount ?? '')
   const [description, setDescription] = useState(initial?.description || '')
   const [date, setDate] = useState(initial?.date || todayISODate())
@@ -26,8 +23,8 @@ export default function ExpenseForm({
     setError('')
 
     const numericAmount = Number(amount)
-    if (!userName) {
-      setError('Please choose a name.')
+    if (!spentBy.trim()) {
+      setError('Please enter who spent this.')
       return
     }
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
@@ -38,17 +35,21 @@ export default function ExpenseForm({
       setError('Please add a short description.')
       return
     }
+    if (!date) {
+      setError('Please pick a date.')
+      return
+    }
 
     setSubmitting(true)
     try {
       await onSubmit({
-        userName,
+        spentBy: spentBy.trim(),
         amount: numericAmount,
         description: description.trim(),
         date,
       })
       if (!initial) {
-        // Reset for the next entry, but keep the acting user's name.
+        setSpentBy('')
         setAmount('')
         setDescription('')
         setDate(todayISODate())
@@ -63,25 +64,15 @@ export default function ExpenseForm({
   return (
     <form className="form" onSubmit={handleSubmit}>
       <div className="form-row">
-        <label htmlFor="expense-name">Name</label>
-        {allowUserNameSelect ? (
-          <select
-            id="expense-name"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-          >
-            <option value="" disabled>
-              Select a name
-            </option>
-            {members.map((member) => (
-              <option key={member.id} value={member.name}>
-                {member.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input id="expense-name" type="text" value={userName} disabled readOnly />
-        )}
+        <label htmlFor="expense-spent-by">Spent By</label>
+        <input
+          id="expense-spent-by"
+          type="text"
+          placeholder="e.g. Kathan"
+          value={spentBy}
+          onChange={(e) => setSpentBy(e.target.value)}
+          required
+        />
       </div>
 
       <div className="form-row">
@@ -95,6 +86,7 @@ export default function ExpenseForm({
           placeholder="0.00"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+          required
         />
       </div>
 
@@ -106,6 +98,7 @@ export default function ExpenseForm({
           placeholder="e.g. Flowers for the mandap"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          required
         />
       </div>
 
@@ -116,6 +109,7 @@ export default function ExpenseForm({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          required
         />
       </div>
 

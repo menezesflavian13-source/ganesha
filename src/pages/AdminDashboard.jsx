@@ -39,7 +39,7 @@ export default function AdminDashboard() {
     await deleteDoc(doc(db, 'contributions', id))
   }
 
-  // Expenses: admin can add/edit/delete any, including reassigning the name.
+  // Expenses: admin can add/edit/delete any, including reassigning who spent it.
   async function handleAddExpense(values) {
     await addDoc(collection(db, 'expenses'), {
       ...values,
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
 
   async function handleSaveExpense(id, values) {
     await updateDoc(doc(db, 'expenses', id), {
-      userName: values.userName,
+      spentBy: values.spentBy,
       amount: values.amount,
       description: values.description,
       date: values.date,
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
           <>
             <section className="panel">
               <h2>Add an expense</h2>
-              <ExpenseForm allowUserNameSelect members={members} onSubmit={handleAddExpense} />
+              <ExpenseForm onSubmit={handleAddExpense} />
             </section>
             <section className="panel">
               <h2>All expenses</h2>
@@ -115,8 +115,6 @@ export default function AdminDashboard() {
                 expenses={expenses}
                 loading={loadingExpenses}
                 canEdit={() => true}
-                allowUserNameSelect
-                members={members}
                 onSave={handleSaveExpense}
                 onDelete={handleDeleteExpense}
               />

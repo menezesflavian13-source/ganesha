@@ -25,11 +25,13 @@ service cloud.firestore {
 
     match /expenses/{expenseId} {
       allow read: if true;
-      allow create, update: if request.resource.data.userName is string
-        && request.resource.data.userName.size() > 0
+      allow create, update: if request.resource.data.spentBy is string
+        && request.resource.data.spentBy.size() > 0
         && request.resource.data.amount is number
         && request.resource.data.amount > 0
-        && request.resource.data.description is string;
+        && request.resource.data.description is string
+        && request.resource.data.date is string
+        && request.resource.data.date.size() > 0;
       allow delete: if true;
     }
 
